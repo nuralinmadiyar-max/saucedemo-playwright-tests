@@ -1,5 +1,7 @@
 from playwright.sync_api import Page
 
+from pages.cart_page import CartPage
+
 
 class InventoryPage:
     """Страница каталога SauceDemo: локаторы и действия в одном месте."""
@@ -10,6 +12,7 @@ class InventoryPage:
         self.item_names = page.locator('[data-test="inventory-item-name"]')
         self.item_prices = page.locator('[data-test="inventory-item-price"]')
         self.cart_badge = page.locator('[data-test="shopping-cart-badge"]')
+        self.cart_link = page.locator('[data-test="shopping-cart-link"]')
 
     def wait_loaded(self):
         """Ждёт, пока на странице появится первый товар."""
@@ -29,3 +32,8 @@ class InventoryPage:
     def add_to_cart(self, product_id: str):
         """Нажимает "Add to cart" у товара, например product_id="sauce-labs-backpack"."""
         self.page.locator(f'[data-test="add-to-cart-{product_id}"]').click()
+
+    def open_cart(self) -> CartPage:
+        """Открывает корзину и возвращает её Page Object."""
+        self.cart_link.click()
+        return CartPage(self.page)
