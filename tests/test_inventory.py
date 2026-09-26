@@ -1,5 +1,8 @@
+import allure
 import pytest
 from playwright.sync_api import expect
+
+pytestmark = allure.feature("Каталог")
 
 
 def test_catalog_shows_six_products(inventory_page):

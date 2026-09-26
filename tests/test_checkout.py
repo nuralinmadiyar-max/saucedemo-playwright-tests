@@ -1,5 +1,8 @@
+import allure
 import pytest
 from playwright.sync_api import expect
+
+pytestmark = allure.feature("Оформление заказа")
 
 
 @pytest.fixture

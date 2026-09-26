@@ -1,39 +1,42 @@
-from playwright.sync_api import Page
+# SauceDemo UI Tests
 
-from pages.cart_page import CartPage
+![UI tests](https://github.com/nuralinmadiyar-max/saucedemo-playwright-tests/actions/workflows/tests.yml/badge.svg)
 
+UI-автотесты для демо-магазина [SauceDemo](https://www.saucedemo.com) на Python + Playwright + pytest с паттерном Page Object. Тесты автоматически запускаются в GitHub Actions при каждом коммите, после прогона публикуется Allure-отчёт.
 
-class InventoryPage:
-    """Страница каталога SauceDemo: локаторы и действия в одном месте."""
+**Allure-отчёт последнего прогона:** https://nuralinmadiyar-max.github.io/saucedemo-playwright-tests/
 
-    def __init__(self, page: Page):
-        self.page = page
-        self.sort_dropdown = page.locator('[data-test="product-sort-container"]')
-        self.item_names = page.locator('[data-test="inventory-item-name"]')
-        self.item_prices = page.locator('[data-test="inventory-item-price"]')
-        self.cart_badge = page.locator('[data-test="shopping-cart-badge"]')
-        self.cart_link = page.locator('[data-test="shopping-cart-link"]')
+## Что покрыто
 
-    def wait_loaded(self):
-        """Ждёт, пока на странице появится первый товар."""
-        self.item_names.first.wait_for()
+20 автотестов:
 
-    def sort_by(self, option: str):
-        """Выбирает сортировку: az, za, lohi или hilo."""
-        self.sort_dropdown.select_option(option)
+- **Логин:** успешный вход и негативные сценарии (пустые поля, пустой пароль, заблокированный пользователь, неверные данные).
+- **Каталог:** количество товаров, сортировка по имени (A→Z, Z→A) и по цене (по возрастанию и убыванию).
+- **Корзина:** добавление товаров и счётчик на значке, отображение товара в корзине, удаление, возврат в каталог.
+- **Оформление заказа:** валидация обязательных полей, проверка расчёта суммы, налога и итога, полный сценарий покупки.
 
-    def get_names(self) -> list[str]:
-        return self.item_names.all_inner_texts()
+## Стек
 
-    def get_prices(self) -> list[float]:
-        """Возвращает цены числами: "$29.99" -> 29.99."""
-        return [float(price.replace("$", "")) for price in self.item_prices.all_inner_texts()]
+Python, Playwright, pytest, Page Object, Allure, GitHub Actions, GitHub Pages
 
-    def add_to_cart(self, product_id: str):
-        """Нажимает "Add to cart" у товара, например product_id="sauce-labs-backpack"."""
-        self.page.locator(f'[data-test="add-to-cart-{product_id}"]').click()
+## Структура
 
-    def open_cart(self) -> CartPage:
-        """Открывает корзину и возвращает её Page Object."""
-        self.cart_link.click()
-        return CartPage(self.page)
+```
+pages/          Page Object: локаторы и действия для каждой страницы
+tests/          тесты
+conftest.py     общие фикстуры и скриншот в отчёт при падении теста
+pytest.ini      настройки pytest и адрес сайта
+.github/        запуск тестов в GitHub Actions и публикация Allure-отчёта
+```
+
+## Как запустить
+
+```
+python -m venv venv
+venv\Scripts\activate          # Windows
+pip install -r requirements.txt
+playwright install chromium
+pytest -v
+```
+
+Запуск с видимым браузером: `pytest --headed`

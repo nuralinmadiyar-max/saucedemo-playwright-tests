@@ -1,7 +1,11 @@
 import re
 
+import allure
 import pytest
 from playwright.sync_api import expect
+
+pytestmark = allure.feature("Логин")
+
 
 PASSWORD = "secret_sauce"
 

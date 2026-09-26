@@ -1,6 +1,9 @@
 import re
 
+import allure
 from playwright.sync_api import expect
+
+pytestmark = allure.feature("Корзина")
 
 
 def test_added_product_appears_in_cart(inventory_page):
