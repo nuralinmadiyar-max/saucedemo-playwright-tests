@@ -11,6 +11,7 @@ class InventoryPage:
         self.sort_dropdown = page.locator('[data-test="product-sort-container"]')
         self.item_names = page.locator('[data-test="inventory-item-name"]')
         self.item_prices = page.locator('[data-test="inventory-item-price"]')
+        self.item_images = page.locator("img.inventory_item_img")
         self.cart_badge = page.locator('[data-test="shopping-cart-badge"]')
         self.cart_link = page.locator('[data-test="shopping-cart-link"]')
 
@@ -28,6 +29,10 @@ class InventoryPage:
     def get_prices(self) -> list[float]:
         """Возвращает цены числами: "$29.99" -> 29.99."""
         return [float(price.replace("$", "")) for price in self.item_prices.all_inner_texts()]
+
+    def get_image_sources(self) -> list[str]:
+        """Возвращает адреса картинок всех товаров."""
+        return [image.get_attribute("src") for image in self.item_images.all()]
 
     def add_to_cart(self, product_id: str):
         """Нажимает "Add to cart" у товара, например product_id="sauce-labs-backpack"."""

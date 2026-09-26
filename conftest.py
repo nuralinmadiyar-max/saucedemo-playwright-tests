@@ -16,12 +16,22 @@ def login_page(page):
 
 
 @pytest.fixture
-def inventory_page(login_page):
+def login_as(login_page):
+    """Возвращает функцию входа под любым пользователем SauceDemo."""
+
+    def _login_as(username: str) -> InventoryPage:
+        login_page.login(username, PASSWORD)
+        inventory_page = InventoryPage(login_page.page)
+        inventory_page.wait_loaded()
+        return inventory_page
+
+    return _login_as
+
+
+@pytest.fixture
+def inventory_page(login_as):
     """Входит под standard_user и отдаёт страницу каталога."""
-    login_page.login("standard_user", PASSWORD)
-    inventory_page = InventoryPage(login_page.page)
-    inventory_page.wait_loaded()
-    return inventory_page
+    return login_as("standard_user")
 
 
 @pytest.hookimpl(hookwrapper=True)
